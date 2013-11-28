@@ -4,6 +4,7 @@
  */
 
 var express = require('express');
+var twitCred = require('./config/tweetKeys')
 var routes = require('./routes');
 var user = require('./routes/user');
 var http = require('http');
@@ -18,7 +19,7 @@ var app = express();
 
 var server = http.createServer(app)
 
-var tagWatch = ['$aapl', '$fb', '$twtr', '$t', '$goog' ]
+var tagWatch = ['$aapl', '$fb', '$twtr', '$t', '$goog', 'lions', 'packers' ]
 
 // all environments
 app.set('port', process.env.PORT || 3000);
@@ -45,10 +46,10 @@ app.get('/users', user.list);
 // var sockets = io.listen(server)
 
 var t = new twitter({
-    consumer_key: '',         
-    consumer_secret: '',        
-    access_token_key: '',       
-    access_token_secret: '' 
+    consumer_key: twitCred.consumer,         
+    consumer_secret: twitCred.consumerSecret,        
+    access_token_key: twitCred.accessKey,       
+    access_token_secret: twitCred.accessSecret 
 });
 
 t.stream('statuses/filter', { track: tagWatch, language: 'en' }, function(stream) {
