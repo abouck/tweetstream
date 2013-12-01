@@ -5,12 +5,13 @@
 
 var express = require('express');
 var twitCred = require('./config/tweetKeys')
+var handles = require('./config/handles')
 var routes = require('./routes');
 var user = require('./routes/user');
 var http = require('http');
 var path = require('path');
 var twitter = require('ntwitter');
-var cronJob = require('cron');
+var cronJob = require('cron').CronJob;
 var _ = require ('underscore');
 var io = require('socket.io');
 
@@ -18,8 +19,21 @@ var io = require('socket.io');
 var app = express();
 
 var server = http.createServer(app)
-
-var tagWatch = ['$aapl', '$fb', '$twtr', '$t', '$goog', 'lions', 'packers' ]
+var handlesArr = []
+for (var key in handles) {
+  if (handles.hasOwnProperty(key)) {
+    var arr = handles[key]
+    arr.forEach(function(h){
+    handlesArr.push(h)
+    });
+  }
+}
+// handles.each(function(company){
+//   company.each(function(handle){
+//     handlesArr.push(handle)
+//   })
+// })
+var tagWatch = ['$mmm','$axp','$t','$ba','$cat','$cvx','$csco','$dd','$xom','$ge','$gs','$hd','$intc','$ibm','$jnj','$jpm','$mcd','$mrk','$msft','$nke','$pfe','$pg','$ko','$trv','$utx','$unh','$vz','$v','$wmt','$dis']
 
 // all environments
 app.set('port', process.env.PORT || 3000);
@@ -40,29 +54,51 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
+var t = new twitter({
+  consumer_key: twitCred.consumer,         
+  consumer_secret: twitCred.consumerSecret,        
+  access_token_key: twitCred.accessKey,       
+  access_token_secret: twitCred.accessSecret 
+});
+
 app.get('/', routes.index);
 app.get('/users', user.list);
+app.get('/tweets', function(){
+  t.stream('statuses/filter', { track: handlesArr,  language: 'en' }, function(stream) {
+
+    tCount = 0
+
+    stream.on('data', function(tweet) {
+      if (tweet.text !== undefined) {
+            console.log(tweet.text)
+            console.log(tweet.created_at)
+            console.log('-> '+tweet.user.name)
+            tCount ++
+      }
+    });
+    stream.on('end',function(e){
+      console.log('connection ended...............................')
+      console.log(e)
+      console.log("Error: " + hostNames[i] + "\n" + e.message); 
+      console.log( e.stack );
+    });
+    stream.on('destroy',function(e){
+      console.log('connection ended...............................')
+      console.log(e)
+      console.log("Error: " + hostNames[i] + "\n" + e.message); 
+      console.log( e.stack );
+    });
+    setInterval((function() {
+      console.log('************************************* ' + tCount);
+    }), 10000);
+    
+  });
+});
 
 // var sockets = io.listen(server)
 
-var t = new twitter({
-    consumer_key: twitCred.consumer,         
-    consumer_secret: twitCred.consumerSecret,        
-    access_token_key: twitCred.accessKey,       
-    access_token_secret: twitCred.accessSecret 
-});
-
-t.stream('statuses/filter', { track: tagWatch, language: 'en' }, function(stream) {
 
 
-  stream.on('data', function(tweet) {
-
-          console.log(tweet.text)
-          console.log(tweet.created_at)
-          console.log('-> '+tweet.user.name)
-
-  });
-});
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
