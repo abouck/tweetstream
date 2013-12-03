@@ -8,6 +8,7 @@ var twitCred = require('./config/tweetKeys')
 var handles = require('./config/handles')
 var routes = require('./routes');
 var user = require('./routes/user');
+var graph = require('./routes/graph');
 var http = require('http');
 var path = require('path');
 var twitter = require('ntwitter');
@@ -38,7 +39,7 @@ var tagWatch = ['$mmm','$axp','$t','$ba','$cat','$cvx','$csco','$dd','$xom','$ge
 // all environments
 app.set('port', process.env.PORT || 3000);
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set('view engine', 'ejs');
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.json());
@@ -63,36 +64,36 @@ var t = new twitter({
 
 app.get('/', routes.index);
 app.get('/users', user.list);
-app.get('/tweets', function(){
-  t.stream('statuses/filter', { track: handlesArr,  language: 'en' }, function(stream) {
+app.get('/graph', graph.show);
 
-    tCount = 0
+t.stream('statuses/filter', { track: handlesArr, laguage: 'en' } , function(stream) {
 
-    stream.on('data', function(tweet) {
-      if (tweet.text !== undefined) {
-            console.log(tweet.text)
-            console.log(tweet.created_at)
-            console.log('-> '+tweet.user.name)
-            tCount ++
-      }
-    });
-    stream.on('end',function(e){
-      console.log('connection ended...............................')
-      console.log(e)
-      console.log("Error: " + hostNames[i] + "\n" + e.message); 
-      console.log( e.stack );
-    });
-    stream.on('destroy',function(e){
-      console.log('connection ended...............................')
-      console.log(e)
-      console.log("Error: " + hostNames[i] + "\n" + e.message); 
-      console.log( e.stack );
-    });
-    setInterval((function() {
-      console.log('************************************* ' + tCount);
-    }), 10000);
-    
+  tCount = 0
+
+  stream.on('data', function(tweet) {
+    if (tweet.text !== undefined) {
+          console.log(tweet.text)
+          console.log(tweet.created_at)
+          console.log('-> '+tweet.user.name)
+          tCount ++
+    }
   });
+  stream.on('end',function(e){
+    console.log('connection ended...............................')
+    console.log(e)
+    console.log("Error: " + hostNames[i] + "\n" + e.message); 
+    console.log( e.stack );
+  });
+  stream.on('destroy',function(e){
+    console.log('connection ended...............................')
+    console.log(e)
+    console.log("Error: " + hostNames[i] + "\n" + e.message); 
+    console.log( e.stack );
+  });
+  setInterval((function() {
+    console.log('************************************* ' + tCount);
+  }), 10000);
+  
 });
 
 // var sockets = io.listen(server)

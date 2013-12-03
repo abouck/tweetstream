@@ -7,11 +7,12 @@
   },
   "dependencies": {
     "express": "3.4.4",
-    "jade": "*",
     "stylus": "*",
     "socket.io": "*",
     "underscore": "*",
     "cron": "*",
-    "ntwitter": "*"
+    "ntwitter": "*",
+    "ejs": "*",
+    "rickshaw": "*"
   }
 }
