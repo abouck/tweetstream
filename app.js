@@ -34,7 +34,7 @@ for (var key in handles) {
 //     handlesArr.push(handle)
 //   })
 // })
-var tagWatch = ['$mmm','$axp','$t','$ba','$cat','$cvx','$csco','$dd','$xom','$ge','$gs','$hd','$intc','$ibm','$jnj','$jpm','$mcd','$mrk','$msft','$nke','$pfe','$pg','$ko','$trv','$utx','$unh','$vz','$v','$wmt','$dis']
+// var tagWatch = ['$mmm','$axp','$t','$ba','$cat','$cvx','$csco','$dd','$xom','$ge','$gs','$hd','$intc','$ibm','$jnj','$jpm','$mcd','$mrk','$msft','$nke','$pfe','$pg','$ko','$trv','$utx','$unh','$vz','$v','$wmt','$dis']
 
 // all environments
 app.set('port', process.env.PORT || 3000);
@@ -69,12 +69,57 @@ app.get('/graph', graph.show);
 t.stream('statuses/filter', { track: handlesArr, laguage: 'en' } , function(stream) {
 
   tCount = 0
-
+  tObj = {
+  "threeM": 0,
+  "amEx": 0,
+  "att": 0,
+  "boeing": 0,
+  "caterpillar": 0,
+  "chevron": 0,
+  "cisco": 0,
+  "dupont": 0,
+  "exxon": 0,
+  "ge": 0,
+  "goldman": 0,
+  "homedepot": 0,
+  "intel": 0,
+  "ibm": 0,
+  "jnj": 0,
+  "jpmorgan": 0,
+  "mcdonalds": 0,
+  "merck": 0,
+  "microsoft": 0,
+  "nike": 0,
+  "pfizer": 0,
+  "procter": 0,
+  "coke": 0,
+  "travelers": 0,
+  "unitedtech": 0,
+  "unitedhealth": 0,
+  "verizon": 0,
+  "visa": 0,
+  "walmart": 0,
+  "disney": 0
+  }
   stream.on('data', function(tweet) {
     if (tweet.text !== undefined) {
-          console.log(tweet.text)
-          console.log(tweet.created_at)
-          console.log('-> '+tweet.user.name)
+      var text = tweet.text.toLowerCase().split(/[\s\!\?\.]+/);
+    //  console.log(text)
+
+          for (var key in handles) {
+          if (handles.hasOwnProperty(key)) {
+            handles[key].forEach(function(x){
+              text.forEach(function(y){
+                if(x == y){
+                  tObj[key]++
+                }
+              })
+            })
+        }
+      }
+          // console.log(tweet.text)
+          // console.log(tweet.created_at)
+          // console.log('-> '+tweet.user.name)
           tCount ++
     }
   });
@@ -92,6 +137,7 @@ t.stream('statuses/filter', { track: handlesArr, laguage: 'en' } , function(stre
   });
   setInterval((function() {
     console.log('************************************* ' + tCount);
+    console.log(tObj)
   }), 10000);
   
 });
