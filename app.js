@@ -12,14 +12,16 @@ var graph = require('./routes/graph');
 var http = require('http');
 var path = require('path');
 var twitter = require('ntwitter');
-var cronJob = require('cron').CronJob;
-var _ = require ('underscore');
-var io = require('socket.io');
+var phantom = require('phantom');
 
 
 var app = express();
 
 var server = http.createServer(app)
+var io = require('socket.io').listen(server)
+
+server.listen(8080)
+
 var handlesArr = []
 for (var key in handles) {
   if (handles.hasOwnProperty(key)) {
@@ -66,40 +68,44 @@ app.get('/', routes.index);
 app.get('/users', user.list);
 app.get('/graph', graph.show);
 
+io.sockets.on('connection', function(socket) {
+  socket.emit('news', { message: 'welcome to the stock market!'});
+})
+
 t.stream('statuses/filter', { track: handlesArr, laguage: 'en' } , function(stream) {
 
   tCount = 0
   tObj = {
-  "threeM": 0,
-  "amEx": 0,
-  "att": 0,
-  "boeing": 0,
-  "caterpillar": 0,
-  "chevron": 0,
-  "cisco": 0,
-  "dupont": 0,
-  "exxon": 0,
-  "ge": 0,
-  "goldman": 0,
-  "homedepot": 0,
-  "intel": 0,
-  "ibm": 0,
-  "jnj": 0,
-  "jpmorgan": 0,
-  "mcdonalds": 0,
-  "merck": 0,
-  "microsoft": 0,
-  "nike": 0,
-  "pfizer": 0,
-  "procter": 0,
-  "coke": 0,
-  "travelers": 0,
-  "unitedtech": 0,
-  "unitedhealth": 0,
-  "verizon": 0,
-  "visa": 0,
-  "walmart": 0,
-  "disney": 0
+  "MMM": 0,
+  "AXP": 0,
+  "T": 0,
+  "BA": 0,
+  "CAT": 0,
+  "CVX": 0,
+  "CSCO": 0,
+  "DD": 0,
+  "XOM": 0,
+  "GE": 0,
+  "GS": 0,
+  "HD": 0,
+  "INTC": 0,
+  "IBM": 0,
+  "JNJ": 0,
+  "JPM": 0,
+  "MCD": 0,
+  "MRK": 0,
+  "MSFT": 0,
+  "NKE": 0,
+  "PFE": 0,
+  "PG": 0,
+  "KO": 0,
+  "TRV": 0,
+  "UTX": 0,
+  "UNH": 0,
+  "VZ": 0,
+  "V": 0,
+  "WMT": 0,
+  "DIS": 0
   }
   stream.on('data', function(tweet) {
     if (tweet.text !== undefined) {
@@ -122,6 +128,7 @@ t.stream('statuses/filter', { track: handlesArr, laguage: 'en' } , function(stre
           // console.log('-> '+tweet.user.name)
           tCount ++
     }
+    tweet = null
   });
   stream.on('end',function(e){
     console.log('connection ended...............................')
@@ -138,8 +145,61 @@ t.stream('statuses/filter', { track: handlesArr, laguage: 'en' } , function(stre
   setInterval((function() {
     console.log('************************************* ' + tCount);
     console.log(tObj)
+    io.sockets.emit('tweets', tObj)
   }), 10000);
   
+});
+
+phantom.create(function(ph) {
+  ph.createPage(function(page) {
+
+    page.open("https://accounts.google.com/Login", function(status) {
+      page.onConsoleMessage = function (msg){
+      console.log(msg);
+      };
+      console.log("opened site?", status);
+        page.evaluate(function() {
+         console.log('login started')
+         console.log(document.getElementById('gaia_loginform'))
+          document.getElementById('Email').value = '@gmail.com'
+          console.log(document.getElementById('Email').value)
+          document.getElementById('Passwd').value = ''
+          console.log(document.getElementById('Passwd').value)
+          document.getElementById('gaia_loginform').submit()
+          console.log('submitting...')
+          return document.getElementById('Email').value;
+        }, function(result) {
+            console.log(result);
+            });  
+      
+    });
+
+    setTimeout(function(){
+      console.log("fetching index")
+      page.open("https://www.google.com/finance/portfolio?action=view&pid=1&ei=E1WnUpjZM6WYiQKD2QE", function(status) {
+        console.log("opened site?", status); 
+          setInterval(function() {
+            // page.render('googfinance.png')
+            page.evaluate(function() {
+
+              var stocksObj = {};
+              var nodeList = document.querySelectorAll(".gf-table tbody tr .pf-table-s"),
+              nodeArray = [].slice.call(nodeList);
+               nodeArray.forEach(function(x){
+                 stocksObj[x.innerText] = x.nextSibling.innerText
+               })
+
+              return stocksObj
+            }, function(result) {
+              console.log(result);
+              //Send to all the clients
+              io.sockets.emit('data', result);
+             //   ph.exit();
+            });
+          }, 10000);
+        });
+    }, 5000);
+  });
 });
 
 // var sockets = io.listen(server)

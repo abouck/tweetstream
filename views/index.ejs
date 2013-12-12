@@ -1,3 +1,46 @@
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src='http://code.jquery.com/jquery-1.9.1.min.js'></script>
+    <script src="/javascripts/socket.io.min.js"></script>
+    <script src="/javascripts/script.js"></script>
+  </head>
+  <body>
 <div class="title">
     <%= title %>
 </div>
+<h2 id="last-update"><%= new Date().toTimeString() %></h2>
+<table>
+  <tr><th>Symbol</th><th>Price</th><th>Tweet Volume</th></tr>
+  <tr><td class="sym MMM">MMM</td><td class="price MMM"></td><td class="tvol MMM">0</td></tr>
+  <tr><td class="sym AXP">AXP</td><td class="price AXP"></td><td class="tvol AXP">0</td></tr>  
+  <tr><td class="sym T">T</td><td class="price T"></td><td class="tvol T">0</td></tr>  
+  <tr><td class="sym BA">BA</td><td class="price BA"></td><td class="tvol BA">0</td></tr>  
+  <tr><td class="sym CAT">CAT</td><td class="price CAT"></td><td class="tvol CAT">0</td></tr>  
+  <tr><td class="sym CVX">CVX</td><td class="price CVX"></td><td class="tvol CVX">0</td></tr>  
+  <tr><td class="sym CSCO">CSCO</td><td class="price CSCO"></td><td class="tvol CSCO">0</td></tr>  
+  <tr><td class="sym DD">DD</td><td class="price DD"></td><td class="tvol DD">0</td></tr>  
+  <tr><td class="sym XOM">XOM</td><td class="price XOM"></td><td class="tvol XOM">0</td></tr>  
+  <tr><td class="sym GE">GE</td><td class="price GE"></td><td class="tvol GE">0</td></tr>  
+  <tr><td class="sym GS">GS</td><td class="price GS"></td><td class="tvol GS">0</td></tr>  
+  <tr><td class="sym HD">HD</td><td class="price HD"></td><td class="tvol HD">0</td></tr>  
+  <tr><td class="sym INTC">INTC</td><td class="price INTC"></td><td class="tvol INTC">0</td></tr>  
+  <tr><td class="sym IBM">IBM</td><td class="price IBM"></td><td class="tvol IBM">0</td></tr>  
+  <tr><td class="sym JNJ">JNJ</td><td class="price JNJ"></td><td class="tvol JNJ">0</td></tr>  
+  <tr><td class="sym JPM">JPM</td><td class="price JPM"></td><td class="tvol JPM">0</td></tr>  
+  <tr><td class="sym MCD">MCD</td><td class="price MCD"></td><td class="tvol MCD">0</td></tr>  
+  <tr><td class="sym MRK">MRK</td><td class="price MRK"></td><td class="tvol MRK">0</td></tr>  
+  <tr><td class="sym MSFT">MSFT</td><td class="price MSFT"></td><td class="tvol MSFT">0</td></tr>  
+  <tr><td class="sym NKE">NKE</td><td class="price NKE"></td><td class="tvol NKE">0</td></tr>  
+  <tr><td class="sym PFE">PFE</td><td class="price PFE"></td><td class="tvol PFE">0</td></tr>  
+  <tr><td class="sym PG">PG</td><td class="price PG"></td><td class="tvol PG">0</td></tr>  
+  <tr><td class="sym KO">KO</td><td class="price KO"></td><td class="tvol KO">0</td></tr>  
+  <tr><td class="sym TRV">TRV</td><td class="price TRV"></td><td class="tvol TRV">0</td></tr>  
+  <tr><td class="sym UTX">UTX</td><td class="price UTX"></td><td class="tvol UTX">0</td></tr>  
+  <tr><td class="sym UNH">UNH</td><td class="price UNH"></td><td class="tvol UNH">0</td></tr>  
+  <tr><td class="sym VZ">VZ</td><td class="price VZ"></td><td class="tvol VZ">0</td></tr>  
+  <tr><td class="sym V">V</td><td class="price V"></td><td class="tvol V">0</td></tr>  
+  <tr><td class="sym WMT">WMT</td><td class="price WMT"></td><td class="tvol WMT">0</td></tr>  
+  <tr><td class="sym DIS">DIS</td><td class="price DIS"></td><td class="tvol DIS">0</td></tr>  
+</table>
