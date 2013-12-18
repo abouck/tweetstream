@@ -68,7 +68,7 @@ var t = new twitter({
 app.get('/', routes.index);
 app.get('/users', user.list);
 app.get('/graph', graph.show);
-
+console.log(process.env)
 io.sockets.on('connection', function(socket) {
   socket.emit('news', { message: 'welcome to the stock market!'});
   socket.emit('data',{ "time": Date.now(), "data": tObj });
@@ -212,9 +212,9 @@ phantom.create(function(ph) {
         page.evaluate(function() {
          console.log('login started')
          console.log(document.getElementById('gaia_loginform'))
-          document.getElementById('Email').value = ''
+          document.getElementById('Email').value = 'stockdude1984@gmail.com'
           console.log(document.getElementById('Email').value)
-          document.getElementById('Passwd').value = ''
+          document.getElementById('Passwd').value = 'potatoesprecious'
           console.log(document.getElementById('Passwd').value)
           document.getElementById('gaia_loginform').submit()
           console.log('submitting...')
